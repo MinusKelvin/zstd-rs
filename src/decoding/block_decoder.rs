@@ -35,7 +35,7 @@ impl BlockDecoder {
         &mut self,
         header: &BlockHeader,
         workspace: &mut DecoderScratch, //reuse this as often as possible. Not only if the trees are reused but also reuse the allocations when building new trees
-        source: &mut dyn Read,
+        source: &mut (impl Read + ?Sized),
     ) -> Result<u64, String> {
         match self.internal_state {
             DecoderState::ReadyToDecodeNextBody => {/* Happy :) */},
@@ -119,7 +119,7 @@ impl BlockDecoder {
         &mut self,
         header: &BlockHeader,
         workspace: &mut DecoderScratch, //reuse this as often as possible. Not only if the trees are reused but also reuse the allocations when building new trees
-        source: &mut dyn Read,
+        source: &mut (impl Read + ?Sized),
     ) -> Result<(), String> {
         workspace
             .block_content_buffer
@@ -221,7 +221,10 @@ impl BlockDecoder {
         Ok(())
     }
 
-    pub fn read_block_header(&mut self, r: &mut dyn Read) -> Result<(BlockHeader, u8), String> {
+    pub fn read_block_header(
+        &mut self,
+        r: &mut (impl Read + ?Sized),
+    ) -> Result<(BlockHeader, u8), String> {
         //match self.internal_state {
         //    DecoderState::ReadyToDecodeNextHeader => {/* Happy :) */},
         //    DecoderState::Failed => return Err(format!("Cant decode next block if failed along the way. Results will be nonsense")),

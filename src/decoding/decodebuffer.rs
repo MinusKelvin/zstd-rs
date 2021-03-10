@@ -174,7 +174,7 @@ impl Decodebuffer {
 
     pub fn drain_to_window_size_writer(
         &mut self,
-        sink: &mut dyn std::io::Write,
+        sink: &mut (impl std::io::Write + ?Sized),
     ) -> Result<usize, std::io::Error> {
         match self.can_drain_to_window_size() {
             None => Ok(0),
@@ -200,7 +200,7 @@ impl Decodebuffer {
 
     pub fn drain_to_writer(
         &mut self,
-        sink: &mut dyn std::io::Write,
+        sink: &mut (impl std::io::Write + ?Sized),
     ) -> Result<usize, std::io::Error> {
         self.hash.write(&self.buffer);
         sink.write_all(&self.buffer)?;
